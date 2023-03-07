@@ -26,12 +26,12 @@
 
 //delay between packets
 unsigned long previousMillis = 0;  // variable to store the previous time
-unsigned long interval = 1000;     // interval at which to send LoRa message
+unsigned long interval = 666;     // interval at which to send LoRa message
 
 SSD1306Wire display(0x3c, SDA_PIN, SCL_PIN);
 
 int counter = 0;
-static const userId = 1;
+static int userId = 1;
 int buttonGreenState = HIGH;
 int buttonRedState = HIGH;
 int lastButtonGreenState = HIGH;
