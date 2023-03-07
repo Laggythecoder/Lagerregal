@@ -63,16 +63,18 @@ void loop() {
     Serial.println("");
     Serial.println("Received packet!");
     // read the packet
-    int counter = LoRa.read();
-    String userId = LoRa.read();
+    String message = "";
+    while (LoRa.available()) {
+      message += (int)LoRa.read();
+    }
     // print the Packet and RSSI
-    Serial.println("counter: " + counter);
-    Serial.println("userId: " + userId);
+    Serial.println("counter: " + message);
+    Serial.println("userId: " + message);
     Serial.print("RSSI: ");
     Serial.println(LoRa.packetRssi());
     // check if message is for this node
     int received_node_id = counter; // convert received message to integer
-    String received_userId = userId;
+    String received_userId = message;
     if (received_node_id == node_id && received_userId == 1) { // case userId = 1
 
     /*
