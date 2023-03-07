@@ -53,6 +53,8 @@ void setup() {
   Serial.println("LoRa initialized!");
 }
 
+
+
 void loop() {
   // see if a packet was received
   int packetSize = LoRa.parsePacket();
@@ -61,22 +63,35 @@ void loop() {
     Serial.println("");
     Serial.println("Received packet!");
     // read the packet
-    String message = "";
-    while (LoRa.available()) {
-      message += (int)LoRa.read();
-    }
+    int counter = LoRa.read();
+    String userId = LoRa.read();
     // print the Packet and RSSI
-    Serial.println(message);
+    Serial.println("counter: " + counter);
+    Serial.println("userId: " + userId);
     Serial.print("RSSI: ");
     Serial.println(LoRa.packetRssi());
     // check if message is for this node
-    int received_node_id = message.toInt(); // convert received message to integer
-    if (received_node_id == node_id) { // compare received message with node_id
+    int received_node_id = counter; // convert received message to integer
+    String received_userId = userId;
+    if (received_node_id == node_id && received_userId == 1) { // case userId = 1
+
+    /*
+    
+    Beispiel für RGB command: https://how2electronics.com/rgb-led-color-control-rotary-encoder-arduino/
+
+    Brauche mehr Infos zum Board
+    
+    */
       digitalWrite(LED_PIN, HIGH);
       led_on = true;
-    } else if (led_on) {
-      digitalWrite(LED_PIN, LOW);
-      led_on = false;
+    }
+    if (received_node_id == node_id && received_userId == 2) { // case userId = 2
+      digitalWrite(LED_PIN, HIGH);
+      led_on = true;
+    }
+      else if (led_on) {
+        digitalWrite(LED_PIN, LOW);
+        led_on = false;
     }
   }
 }

@@ -31,7 +31,7 @@ unsigned long interval = 1000;     // interval at which to send LoRa message
 SSD1306Wire display(0x3c, SDA_PIN, SCL_PIN);
 
 int counter = 0;
-static const userId = 1;
+static const userId = 2;
 int buttonGreenState = HIGH;
 int buttonRedState = HIGH;
 int lastButtonGreenState = HIGH;
@@ -136,7 +136,6 @@ void loop() {
   if (currentMillis - previousMillis >= interval) {
     LoRa.beginPacket();
     LoRa.write(counter);
-    LoRa.write(userId);
     LoRa.endPacket();
     previousMillis = currentMillis;  // save the current time
   }
