@@ -10,7 +10,8 @@
 #define DIO0    26    // GPIO26 -- SX1278's IRQ(Interrupt Request)
 #define SDA_PIN 21
 #define SCL_PIN 22
-#define LED_PIN 0     // LED connected to GPIO2
+#define LED_PIN1 0     // LED connected to GPIO0
+#define LED_PIN2 16     // LED connected to GPIO0
 
 // define the LoRa frequency
 #define LORA_FREQ 866E6
@@ -20,7 +21,8 @@
 
 int counter = 0;
 int prev_counter = 0;
-bool led_on = false;
+bool led1_on = false;
+bool led2_on = false;
 int node_id = 3; // set a unique ID for each board
 
 void setup() {
@@ -28,8 +30,11 @@ void setup() {
   while (!Serial); // wait for Serial Monitor to open
 
 
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW);
+  pinMode(LED_PIN1, OUTPUT);
+  digitalWrite(LED_PIN1, LOW);
+
+  pinMode(LED_PIN2, OUTPUT);
+  digitalWrite(LED_PIN2, LOW);
 
   // Initialize LoRa module
   SPI.begin(SCK, MISO, MOSI, SS);
@@ -79,14 +84,27 @@ void loop() {
     int received_user_id = message2.toInt();
 
 
-    if (received_node_id == node_id) { // compare received message with node_id
-      digitalWrite(LED_PIN, HIGH); 
-      led_on = true;
-    } else if (led_on) {
-      digitalWrite(LED_PIN, LOW);
-      led_on = false;
+if (received_user_id == 1) { // compare received message with node_id
+  if (received_node_id == node_id) { // check if received_user_id is 1
+    digitalWrite(LED_PIN1, HIGH); // set LED pin to HIGH
+    led1_on = true; // update led_on flag to indicate that the LED is on
+  } else {
+    if (led1_on) {
+      digitalWrite(LED_PIN1, LOW);
+      led1_on = false; // update led_on flag to indicate that the LED is off
     }
   }
-   
-  
+}
+if (received_user_id == 2) { 
+  if (received_node_id == node_id) { 
+    digitalWrite(LED_PIN2, HIGH); // set LED pin to HIGH
+    led2_on = true; // update led_on flag to indicate that the LED is on
+  } else {
+    if (led2_on) {
+      digitalWrite(LED_PIN2, LOW);
+      led_on = false; // update led_on flag to indicate that the LED is off
+    }
+  }
+}
+}
 }

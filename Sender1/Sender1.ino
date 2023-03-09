@@ -4,6 +4,10 @@
 #include <SSD1306Wire.h>
 #include <SPI.h>
 #include <LoRa.h>
+#include <Print.h>
+#include <array>
+#include <iostream>
+using namespace std;
 
 // define the pins for LoRa module
 #define SCK     5
@@ -26,11 +30,13 @@
 
 //delay between packets
 unsigned long previousMillis = 0;  // variable to store the previous time
-unsigned long interval = 666;     // interval at which to send LoRa message
+unsigned long interval = 1333;     // interval at which to send LoRa message
 
 SSD1306Wire display(0x3c, SDA_PIN, SCL_PIN);
 
 int counter = 0;
+int i = 0;
+
 static int userId = 1;
 int buttonGreenState = HIGH;
 int buttonRedState = HIGH;
@@ -40,6 +46,9 @@ unsigned long lastDebounceTimeGreen = 0;
 unsigned long lastDebounceTimeRed = 0;
 unsigned long debounceDelay = 50;
 
+int Path[] = {0, 3, 5 , 8, 9};
+int arrayLength = sizeof(Path)/sizeof(Path[0]);
+
 // define the Lagerort values in an array
 String Lagerort[] = {" ", "1A", "2B", "3C", "4D", "11E", "16F", "7G", "8H", "9I", "10J"};
 
@@ -47,6 +56,8 @@ String Lagerort[] = {" ", "1A", "2B", "3C", "4D", "11E", "16F", "7G", "8H", "9I"
 String Menge[] = {" ", "10", "20", "5", "3", "4", "5", "2", "1", "8", "20"};
 
 void setup() {
+  Serial.begin(115200);
+  while (!Serial);
   // initialize OLED display
   display.init();
   display.flipScreenVertically();
@@ -75,11 +86,18 @@ void setup() {
 
   // initialize counter
   counter = 0;
+  int i = 0;
 }
 
+
 void loop() {
+
+  
   // read the state of the green button
   int readingGreen = digitalRead(BUTTON_GREEN);
+ 
+        
+       
   if (readingGreen != lastButtonGreenState) {
     lastDebounceTimeGreen = millis();
   }
@@ -87,7 +105,29 @@ void loop() {
     if (readingGreen != buttonGreenState) {
       buttonGreenState = readingGreen;
       if (buttonGreenState == LOW) {
-        counter++;
+        
+        //counter++;
+        i++;
+        counter = Path[i];
+        String messageA = "";
+        String messageB = "";
+        String messageC = "";
+        String message1 = messageA += (int)i;
+        String message2 = messageB += (int)counter;
+        String message3 = messageC += (int)arrayLength;
+
+        if ( i > (int)arrayLength){
+          counter = 11;
+          
+        }
+
+    // print the Packet and RSSI
+      Serial.println("i: " + message1);
+      Serial.println("counter: " + message2); 
+      Serial.println("look at my büntel: " + message3);
+      Serial.println("");
+     
+
       }
     }
   }
@@ -102,17 +142,35 @@ void loop() {
     if (readingRed != buttonRedState) {
       buttonRedState = readingRed;
       if (buttonRedState == LOW) {
-        counter--;
+        //counter--;
+        i--;
+        counter = Path[i];
+        String messageA = "";
+        String messageB = "";
+        String message1 = messageA += (int)i;
+        String message2 = messageB += (int)counter;
+    
+    // print the Packet and RSSI
+      Serial.println("i: " + message1);
+      Serial.println("counter: " + message2);
+     
       }
     }
   }
   lastButtonRedState = readingRed;
 
-  // limit the counter to be between 0 and 10
+  // limit the counter to be between 0 and 11
   if (counter < 0) {
     counter = 0;
   } else if (counter > 11) {
     counter = 11;
+  }
+  // limit i to arrayLength + 1
+
+  if (i < 0) {
+    i = 0;
+  } else if (i > arrayLength) {
+    i = arrayLength;
   }
 
    // display the Artikel and Lagerort on OLED
@@ -141,5 +199,3 @@ void loop() {
     previousMillis = currentMillis;  // save the current time
   }
     }
-  
-
