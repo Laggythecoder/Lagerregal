@@ -37,7 +37,7 @@ SSD1306Wire display(0x3c, SDA_PIN, SCL_PIN);
 int counter = 0;
 int i = 0;
 
-static int userId = 1;
+static int userId = 2;
 int buttonGreenState = HIGH;
 int buttonRedState = HIGH;
 int lastButtonGreenState = HIGH;
